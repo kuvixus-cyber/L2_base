@@ -1,0 +1,9 @@
+{
+  "name": "l2-base",
+  "version": "1.0.0",
+  "description": "Solutions for 18 JavaScript Codewars katas (L2_base)",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run-tests.js"
+  }
+}
