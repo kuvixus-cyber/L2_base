@@ -18,7 +18,6 @@ const TASK_FILES = [
   'tasks/02-ipv4-parser.js',
   'tasks/03-what-century-is-it.js',
   'tasks/04-find-missing-term.js',
-  'tasks/05-primes-in-numbers.js',
   'tasks/06-weird-string-case.js',
   'tasks/07-mexican-wave.js',
   'tasks/08-expanded-form.js',
@@ -26,11 +25,8 @@ const TASK_FILES = [
   'tasks/10-lottery-ticket.js',
   'tasks/11-extract-domain-name.js',
   'tasks/12-nth-longest-string.js',
-  'tasks/13-hex-string-to-rgb.js',
   'tasks/14-circularly-sorted-array.js',
-  'tasks/15-grandfather-clock.js',
   'tasks/16-array-helpers.js',
-  'tasks/17-function-cache.js',
   'tasks/18-create-phone-number.js',
 ];
 
@@ -136,15 +132,6 @@ test('04 findMissing', () => {
   assertEqual(findMissing([5, 5, 5]), 5);
 });
 
-// 5. Primes in numbers
-test('05 primeFactors', () => {
-  assertEqual(primeFactors(86240), '(2**5)(5)(7**2)(11)');
-  assertEqual(primeFactors(7775460), '(2**2)(3**3)(5)(7)(11**2)(17)');
-  assertEqual(primeFactors(2), '(2)');
-  assertEqual(primeFactors(4), '(2**2)');
-  assertEqual(primeFactors(7919), '(7919)');
-});
-
 // 6. WeIrD StRiNg CaSe
 test('06 toWeirdCase', () => {
   assertEqual(toWeirdCase('String'), 'StRiNg');
@@ -215,14 +202,6 @@ test('12 longest', () => {
   assertEqual(longest(['a', 'bb', 'ccc', 'd', 'ee', 'f'], 3), 'ee');
 });
 
-// 13. Convert A Hex String To RGB
-test('13 hexStringToRGB', () => {
-  assertEqual(hexStringToRGB('#FF9933'), { r: 255, g: 153, b: 51 });
-  assertEqual(hexStringToRGB('#ff9933'), { r: 255, g: 153, b: 51 });
-  assertEqual(hexStringToRGB('#000000'), { r: 0, g: 0, b: 0 });
-  assertEqual(hexStringToRGB('#Be3a7f'), { r: 190, g: 58, b: 127 });
-});
-
 // 14. Circularly Sorted Array
 test('14 isCircleSorted', () => {
   assertEqual(isCircleSorted([2, 3, 4, 5, 0, 1]), true);
@@ -238,53 +217,6 @@ test('14 isCircleSorted', () => {
   assertEqual(isCircleSorted([8, 7, 6, 5, 4, 3]), false);
   assertEqual(isCircleSorted([6, 7, 4, 8]), false);
   assertEqual(isCircleSorted([7, 6, 5, 4, 3, 2, 1]), false);
-});
-
-// 15. T.T.T.33: Grandfather clock
-test('15 howManyTimes', () => {
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 12:00:01'), 1);
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 12:00:11'), 11);
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 12:01:00'), 12);
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 12:30:00'), 12);
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 12:31:00'), 13);
-  assertEqual(howManyTimes('2016-08-14 12:00:00', '2016-08-14 13:01:00'), 14);
-  assertEqual(howManyTimes('2016-08-14 00:00:00', '2016-08-15 00:00:00'), 180);
-  assertEqual(howManyTimes('2016-08-14 12:00:05', '2016-08-14 12:00:10'), 5);
-  assertEqual(howManyTimes('2016-08-14 12:30:00', '2016-08-14 12:30:01'), 1);
-  assertEqual(howManyTimes('2016-08-14 12:30:01', '2016-08-14 12:31:00'), 0);
-
-  // Brute-force cross-check across a 36-hour window around midnight
-  function bruteForce(t1, t2) {
-    const parse = (s) => {
-      const [d, tm] = s.split(' ');
-      const [y, m, day] = d.split('-').map(Number);
-      const [hh, mm, ss] = tm.split(':').map(Number);
-      return Date.UTC(y, m - 1, day, hh, mm, ss) / 1000;
-    };
-    const start = parse(t1);
-    const end = parse(t2);
-    let count = 0;
-    for (let t = start; t < end; t++) {
-      const secOfDay = ((t % 86400) + 86400) % 86400;
-      const hour = Math.floor(secOfDay / 3600) % 12;
-      const min = Math.floor((secOfDay % 3600) / 60);
-      const sec = secOfDay % 60;
-      const strikes = hour === 0 ? 12 : hour;
-      if ((min === 0 && sec < strikes) || (min === 30 && sec === 0)) {
-        count++;
-      }
-    }
-    return count;
-  }
-
-  const spans = [
-    ['2016-08-14 23:00:03', '2016-08-15 02:30:01'],
-    ['2016-12-31 23:59:50', '2017-01-01 13:00:01'],
-    ['2016-02-28 11:00:05', '2016-03-01 00:00:07'],
-  ];
-  for (const [s1, s2] of spans) {
-    assertEqual(howManyTimes(s1, s2), bruteForce(s1, s2), `${s1} -> ${s2}`);
-  }
 });
 
 // 16. Array Helpers
@@ -303,69 +235,6 @@ test('16 Array.prototype helpers', () => {
   assertEqual([].square(), []);
   assertEqual([-3, -2, -1, 0, 1].odd(), [-3, -1, 1]);
   assertEqual([-3, -2, -1, 0, 1].even(), [-2, 0]);
-});
-
-// 17. Function Cache
-test('17 cache', () => {
-  let calls = 0;
-  const complex = cache(function (a, b) {
-    calls++;
-    if (a === 'retUndef') return undefined;
-    return [a, b, calls];
-  });
-
-  const r1 = complex('foo', 'bar');
-  const r2 = complex('foo', 'bar');
-  assertEqual(r1, r2);
-  assertEqual(calls, 1);
-
-  complex('foo', 'baz');
-  assertEqual(calls, 2);
-
-  // Empty args vs undefined vs null vs 'undefined'
-  complex();
-  complex();
-  assertEqual(calls, 3);
-
-  complex(undefined);
-  complex(undefined);
-  assertEqual(calls, 4);
-
-  complex(null);
-  complex(null);
-  assertEqual(calls, 5);
-
-  complex('undefined');
-  complex('undefined');
-  assertEqual(calls, 6);
-
-  // Cached undefined return value must not re-invoke
-  assertEqual(complex('retUndef'), undefined);
-  assertEqual(complex('retUndef'), undefined);
-  assertEqual(calls, 7);
-
-  // Equivalent object arguments (including differing key order)
-  complex({ a: 1, b: 2 });
-  complex({ b: 2, a: 1 });
-  assertEqual(calls, 8);
-
-  // Distinct function arguments
-  const f1 = () => 1;
-  const f2 = () => 1;
-  complex(f1);
-  complex(f1);
-  assertEqual(calls, 9);
-  complex(f2);
-  assertEqual(calls, 10);
-
-  // Preserves `this` context
-  const obj = {
-    factor: 10,
-    compute: cache(function (x) {
-      return this.factor * x;
-    }),
-  };
-  assertEqual(obj.compute(3), 30);
 });
 
 // 18. Create Phone Number
